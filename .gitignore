@@ -1,0 +1,6 @@
+__old__
+__pycache__
+.secret
+.env
+.dist
+keys.json

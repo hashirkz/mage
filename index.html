@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mage.wtf</title>
+
+    <link rel="stylesheet" href="/css/grape_juice.css">
+    <link rel="icon" href="/imgs/mage_tk.jpg">
+
+    <!-- libs -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="bg-container">
+    </div>
+    <div class="vcard">
+        <img id="mage" src="/imgs/mage.gif" alt="mage">
+        <a href="" class="name">$mage</a>
+        <ul id="socials">
+            <li class="social">
+                <a class="card" href="">
+                    <img src="/imgs/tg.svg" alt="tg">
+                </a>
+            </li>
+            <li class="social">
+                <a class="card" href="">
+                    <img src="/imgs/twt.svg" alt="twt">
+                </a>
+            </li>
+        </ul>
+
+        <p class="ca">sol: *</p>
+        <div class="vcard">
+            <div class="hcard">
+                <div id="info" class="vcard info">
+                </div>
+                <div class="vcard about">
+                    <p class="name2">about</p>
+                    <p>cast your spells and brew your potions fellow mages, for her evilness shall not rest till the lands of pumpfun are hers.</p>
+                </div>
+            </div>
+        </div>
+          
+    </div>
+    <script defer>
+        $(document).ready(() => {
+
+            let ca = "";
+            let url = "https://client-api-2-74b1891ee9f9.herokuapp.com/coins/" + ca;
+
+            // read timestamp
+            function read_timestamp(timestamp) {
+                const date = new Date(timestamp);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${year}-${month}-${day} ${hours}:${minutes}`;
+            }
+
+            // updates the token stats / info div
+            let update_info = json => {
+                sol = json.market_cap;
+                usd = json.usd_market_cap;
+                // tokens = Math.floor(json.virtual_token_reserves / 1e6) + 'm';
+                replies = json.reply_count;
+                koth = json.king_of_the_hill_timestamp ? read_timestamp(json.king_of_the_hill_timestamp) : 'not yet';
+                // raydium_pool = json.raydium_pool ? json.raydium_pool : 'no pool yet';
+
+                $("#info").empty();
+                $("#info").append(
+                    "<p class='ca'>sol: " + sol + "</p>" +
+                    "<p class='ca'>koth: " + koth + "</p>" + 
+                    "<p class='ca'>replies: " + replies + "</p>"
+                    // "<p class='ca'>raydium: " + raydium_pool + "</p>"
+                );
+
+            };
+
+            let fetch_info = url => {
+                $.ajax({
+                    url: url,
+                    async: true,
+                    dataType: 'json',
+                    success: json => {
+                        update_info(json);
+                    }
+                });
+            }
+
+            let refresh = 7000;
+            fetch_info(url)
+            setInterval(() => {fetch_info(url);}, refresh);
+        });
+    </script>
+</body>
+</html>
